@@ -1,0 +1,58 @@
+# Import SAP GUI Scripting COM library
+Add-Type -AssemblyName "SAPFEWSELib, Version=6300.0.0.1, Culture=neutral, PublicKeyToken=50436dca5c7f7d23" 
+
+# Function to check file existence
+function Test-FileExists {
+    param (
+        [string]$FilePath
+    )
+
+    return Test-Path $FilePath -PathType Leaf
+}
+
+# Function to perform automated checks for mismatches and discrepancies
+function PerformAutomatedChecks {
+    # Add your logic here to check for mismatches and discrepancies in invoice data
+    # Example: Query database or compare invoice details with reference data
+    # Return $true if checks pass, otherwise return $false
+    return $true
+}
+
+# Create SAP GUI Scripting object
+$SapGuiAuto = New-Object -ComObject SAPFEWSELib.GuiApplication
+$Connection = $SapGuiAuto.Connections.Add()
+
+# Connect to SAP system
+# Your connection setup code here...
+
+if ($Connection.Busy -eq $false) {
+    Write-Host "Connected to SAP system"
+} else {
+    Write-Host "Failed to connect to SAP system"
+    exit
+}
+
+# Navigate to invoice processing transaction
+# Your navigation code here...
+
+# Perform automated checks for mismatches and discrepancies
+if (PerformAutomatedChecks) {
+    Write-Host "Automated checks passed. Proceeding with invoice processing..."
+
+    # Check for missing files
+    $invoiceFilePath = "<Path_to_Invoice_File>"
+    if (Test-FileExists -FilePath $invoiceFilePath) {
+        Write-Host "Invoice file found. Processing invoice..."
+        # Simulate user actions for processing the invoice
+        # Example: Upload invoice file, enter details, verify data, and submit invoice
+    } else {
+        Write-Host "Error: Invoice file not found. Aborting invoice processing."
+    }
+} else {
+    Write-Host "Error: Automated checks detected mismatches or discrepancies. Aborting invoice processing."
+}
+
+# Close SAP session
+$Connection.CloseSession()
+
+Write-Host "SAP session closed"
