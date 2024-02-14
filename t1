@@ -1,0 +1,37 @@
+# Import SAP GUI Scripting COM library
+Add-Type -AssemblyName "SAPFEWSELib, Version=6300.0.0.1, Culture=neutral, PublicKeyToken=50436dca5c7f7d23" 
+
+# Create SAP GUI Scripting object
+$SapGuiAuto = New-Object -ComObject SAPFEWSELib.GuiApplication
+$Connection = $SapGuiAuto.Connections.Add()
+
+# Connect to SAP system
+$Connection.Address = "<SAP_Server_Address>"
+$Connection.Client = "<SAP_Client>"
+$Connection.User = "<SAP_Username>"
+$Connection.Password = "<SAP_Password>"
+$Connection.Language = "<SAP_Language>"
+$Connection.SystemNumber = "<SAP_System_Number>"
+
+$Connection.Connect()
+
+if ($Connection.Busy -eq $false) {
+    Write-Host "Connected to SAP system"
+} else {
+    Write-Host "Failed to connect to SAP system"
+    exit
+}
+
+# Navigate to invoice processing transaction
+$Session = $Connection.Children(0)
+$Session.findById("wnd[0]").maximize()
+$Session.findById("wnd[0]/tbar[0]/okcd").Text = "/n<Invoice_Transaction_Code>"
+$Session.findById("wnd[0]").sendVKey(0)
+
+# Simulate user actions for invoice processing
+# Example: Enter invoice details, verify data, and submit invoice
+
+# Close SAP session
+$Connection.CloseSession()
+
+Write-Host "SAP session closed"
